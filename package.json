@@ -4,7 +4,7 @@
   "description": "Rest API - NodeJs, using Fastify, TypeScript, KnexJs, Vitest, etc",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx watch src/hello_world.ts",
+    "dev": "tsx watch src/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,5 +22,8 @@
     "@types/node": "^22.14.0",
     "tsx": "^4.19.3",
     "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "fastify": "^5.2.2"
   }
 }
