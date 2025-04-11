@@ -1,0 +1,26 @@
+{
+  "name": "rest_api_nodejs",
+  "version": "1.0.0",
+  "description": "Rest API - NodeJs, using Fastify, TypeScript, KnexJs, Vitest, etc",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch src/hello_world.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rramires/rest_api_nodejs.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rramires/rest_api_nodejs/issues"
+  },
+  "homepage": "https://github.com/rramires/rest_api_nodejs#readme",
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.3"
+  }
+}
