@@ -24,6 +24,44 @@ Add **type": "module"** at the beginning along with the project name, version et
 
 [Install and Configure TypeScript](https://github.com/rramires/typescript_fundamentals?tab=readme-ov-file#typescript_fundamentals)
 
+#### 4 - Add source and build/dist folder in tsconfig.json:
+
+```json
+"rootDir": "./src",
+and
+"outDir": "./dist",
+```
+
+#### 5 - Modify package.json, in scripts section:
+
+```json
+"compile": "npx tsc",
+```
+
+#### 6 - Test compile App:
+
+```sh
+npm run compile
+```
+
+#### 7 - If the compiler picks up any unwanted files, just add the exclusion of that file, or folder, at the end of tsconfig.json
+
+```json
+...
+"skipLibCheck": true 
+} 
+// After this, add:
+
+//,"exclude": [
+//  "excluded_folder",
+//  "excluded_file.ts",
+//  "**/__excluded_joker__ /*"
+//]
+
+// Befone the last brace:
+}
+```
+
 ---
 
 ### Fastify
