@@ -1,56 +1,73 @@
 # rest_api_node
+
 Rest API - NodeJs, using Fastify, TypeScript, KnexJs, Vitest, etc
 
 ### Initial configuration and module installation
 
+### TypeScript
+
 #### 1 - Init the project:
+
 ```sh
-npm init -y     
+npm init -y
 ```
 
-#### 2 - Install TypeScript and types, following this instructions:
+#### 2 - Change the configuration in package.json to use import instead of require
+
+Add **type": "module"** at the beginning along with the project name, version etc
+
+```json
+"type": "module",
+```
+
+#### 3 - Install TypeScript and types, following this instructions:
 
 [Install and Configure TypeScript](https://github.com/rramires/typescript_fundamentals?tab=readme-ov-file#typescript_fundamentals)
 
-#### 3 - Install Fastify
+---
+
+### Fastify
+
+#### 1 - Install Fastify
+
 ```sh
-npm i fastify     
+npm i fastify
 ```
 
-#### 4 - Rename or create server.ts and add Fastify Hello:
-```javascript
-import fastify from "fastify";
+#### 2 - Rename or create server.ts and add Fastify Hello:
 
-const app = fastify();
+```javascript
+import fastify from 'fastify'
+
+const app = fastify()
 
 app.get('/hello', async () => {
-    return "Hello from Fastify!";
-});
+	return 'Hello from Fastify!'
+})
 
 app.listen({ port: 3333 }, (err, address) => {
-    if (err) {
-        console.error(err);
-        process.exit(1);
-    }
-    console.log(`Server is running at ${address}`);
-});    
+	if (err) {
+		console.error(err)
+		process.exit(1)
+	}
+	console.log(`Server is running at ${address}`)
+})
 ```
 
-#### 5 - Modify package.json, in scripts section:
+#### 3 - Modify package.json, in scripts section:
 
 ```json
-"dev": "tsx watch src/server.ts", 
+"dev": "tsx watch src/server.ts",
 ```
 
-#### 6 - Running the App:
+#### 4 - Running the App:
 
 ```sh
-npm run dev   
+npm run dev
 ```
 
-#### 7 - Access via HTTPie or in your browser:
+#### 5 - Access via HTTPie or in your browser:
 
 ```sh
-http GET localhost:3333/hello    
+http GET localhost:3333/hello
 ```
-
