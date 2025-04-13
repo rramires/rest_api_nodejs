@@ -132,13 +132,19 @@ npm install @types/better-sqlite3 -D
 ```js
 import knex, { Knex } from 'knex';
 
-export const knexConn: Knex = knex({
+export const config: Knex.Config = {
     client: 'better-sqlite3',
     connection: {
         filename: './db/app.db'
     },
-    useNullAsDefault: true
-});
+    useNullAsDefault: true,
+    migrations: {
+        directory: './db/migrations',
+        extension: 'ts'
+    }
+}
+
+export const knexConn: Knex = knex(config);
 ```
 
 #### 4 - Create db folder in root and add to .gitignore
@@ -166,6 +172,44 @@ app.get('/db', async () => {
 
 ```sh
 http GET localhost:3333/db
+```
+
+#### 7 - Create knexfile.ts in root folder, for migrations:
+
+```js
+import { config } from "./src/database.js"
+
+export default config
+```
+
+#### 8 - Adding knex command in package.json:
+* The file created above file is originally javascript and not typescript  
+Migrations in knex were not written to run with typescript  
+Let's solve this by creating a command in the scripts section of package.json
+
+```json
+"knex": "node --import tsx ./node_modules/knex/bin/cli.js",
+```
+* Now every knex migration command must be preceded by: **npm run knex --**  
+For example, let's call help
+```sh
+npm run knex -- -h
+```
+
+#### 9 - Creating the first migration (e.g. entity documents)
+
+```sh
+npm run knex -- migrate:make create-documents 
+```
+
+#### 10 - If you get an error in VSCode PROBLEMS because these .ts are outside the rootDir.
+* use the exclude at the end of tsconfig.json for now.
+
+```json
+"exclude": [
+	"knexfile.ts",
+	"db/migrations"
+]
 ```
 
 ---
