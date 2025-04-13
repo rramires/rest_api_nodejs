@@ -1,3 +1,6 @@
+# App SQLite db
+db/app.db
+
 # Logs
 logs
 *.log

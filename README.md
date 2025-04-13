@@ -126,3 +126,46 @@ npm install knex
 npm install better-sqlite3
 npm install @types/better-sqlite3 -D
 ```
+
+#### 3 - Create Knex-SQLite connection in database.ts file
+
+```js
+import knex, { Knex } from 'knex';
+
+export const knexConn: Knex = knex({
+    client: 'better-sqlite3',
+    connection: {
+        filename: './db/app.db'
+    },
+    useNullAsDefault: true
+});
+```
+
+#### 4 - Create db folder in root and add to .gitignore
+
+```sh
+# App SQLite db
+db/app.db
+```
+
+#### 5 - Add route for testing connection to db in server.ts
+
+```js
+import { knexConn } from './database.js'
+
+app.get('/db', async () => {
+	// select for testing 
+	const result = await knexConn.raw('select 1+9 as result')
+	//console.log(result[0].result)
+
+	return `Result from database is: ${result[0].result}`
+})
+```
+
+#### 6 - Access via HTTPie or in your browser:
+
+```sh
+http GET localhost:3333/db
+```
+
+---
