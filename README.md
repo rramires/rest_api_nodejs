@@ -109,3 +109,20 @@ npm run dev
 ```sh
 http GET localhost:3333/hello
 ```
+
+---
+
+### KnexJs
+
+#### 1 - Install KnexJs
+
+```sh
+npm install knex
+```
+
+#### 2 - Install SQLite and Types
+
+```sh
+npm install better-sqlite3
+npm install @types/better-sqlite3 -D
+```
