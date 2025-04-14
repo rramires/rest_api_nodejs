@@ -212,7 +212,7 @@ npm run knex -- migrate:make create-transactions
 ]
 ```
 
-#### 10 - Adding table in migration
+#### 11 - Adding table in migration
 
 ```js
 // in up function
@@ -226,19 +226,19 @@ await knex.schema.createTable("transactions", (table) => {
 await knex.schema.dropTableIfExists("transactions")
 ```
 
-#### 11 - Execute migration
+#### 12 - Execute migration
 
 ```sh
 npm run knex -- migrate:latest 
 ```
 
-#### 12 - Install SQLite Viewer extension  
+#### 13 - Install SQLite Viewer extension  
 
 [SQLite Viewer](https://marketplace.visualstudio.com/items?itemName=qwtel.sqlite-viewer)
 
 * After installing, click on app.db and see the table **transactions** created by migration and the auxiliary tables
 
-#### 13 - Rollback migration
+#### 14 - Rollback migration
 
 ```sh
 npm run knex -- migrate:rollback
@@ -246,7 +246,7 @@ npm run knex -- migrate:rollback
 
 * Go back to SQL Viewer, reload and see that the transactions table has been deleted.
 
-#### 14 - Add a new migration to create a new field
+#### 15 - Add a new migration to create a new field
 
 ```sh
 npm run knex -- migrate:make add-session-id-to-transactions
@@ -269,9 +269,37 @@ Execute again:
 ```sh
 npm run knex -- migrate:latest 
 ```
-#### 15 - View the creation in SQLite Viewer
+#### 16 - View the creation in SQLite Viewer
 
 * Note: It is not necessary to rollback to create the new field. In this case, rollback was done for testing(or learning) purposes only.
 * Note: The session_id field was created at the end and not after the id, despite being specified in the migration. This is because SQLite does not support it. Other databases such as MySQL, Postgress etc would probably support it.
+
+#### 17 - Create simple Insert and Select for test, in servers.ts get /db
+
+```js
+app.get('/db', async () => {
+	// insert 
+	const transaction = await knexConn('transactions').insert({
+		id: randomUUID(),
+		title: 'Transaction 1',
+		amount: 100,
+	}).returning('*')
+	console.log('Inserted:\n', transaction[0], '\n\n');
+
+	// select
+	const transactions = await knexConn('transactions').select('*')
+		.where('amount', '=', 100)
+	//console.log(transactions);.
+	console.log('Select:\n', transactions);
+
+	return transactions
+})
+```
+
+#### 18 - Access via HTTPie or in your browser:
+
+```sh
+http GET localhost:3333/db
+```
 
 ---

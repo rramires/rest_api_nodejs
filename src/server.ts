@@ -1,5 +1,6 @@
 import fastify from 'fastify'
 import { knexConn } from './database.js'
+import { randomUUID } from 'node:crypto'
 
 const app = fastify()
 
@@ -8,11 +9,21 @@ app.get('/hello', async () => {
 })
 
 app.get('/db', async () => {
-	// select for testing 
-	const result = await knexConn.raw('select 1+9 as result')
-	//console.log(result[0].result)
+	// insert 
+	const transaction = await knexConn('transactions').insert({
+		id: randomUUID(),
+		title: 'Transaction 1',
+		amount: 100,
+	}).returning('*')
+	console.log('Inserted:\n', transaction[0], '\n\n');
 
-	return `Result from database is: ${result[0].result}`
+	// select
+	const transactions = await knexConn('transactions').select('*')
+		.where('amount', '=', 100)
+	//console.log(transactions);.
+	console.log('Select:\n', transactions);
+
+	return transactions
 })
 
 app.listen({ port: 3333 }, (err, address) => {
@@ -20,5 +31,5 @@ app.listen({ port: 3333 }, (err, address) => {
 		console.error(err)
 		process.exit(1)
 	}
-	console.log(`Server is running at ${address}`)
+	console.log(`Server is running at ${address} `)
 })
