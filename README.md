@@ -314,14 +314,14 @@ http GET localhost:3333/db
 
 ```ini
 # SQLite database path
-DATABASE_URL="./db/app.db"
+DATABASE_PATH="./db/app.db"
 ```
 
 #### 3 - Create .env.example, which will be added to the versioning in git:
 
 ```ini
 # SQLite database path, e.g. "./db/app.db"
-DATABASE_URL=
+DATABASE_PATH=
 ```
 
 #### 4 - Install DotENV
@@ -347,7 +347,92 @@ import fastify from 'fastify'
 I personally don't like it
 
 ```js
-filename: String(process.env.DATABASE_URL) // || './db/app.db' 
+filename: String(process.env.DATABASE_PATH) // || './db/app.db' 
 ```
 
 ---
+
+### Zod for validations
+
+#### 1 - Install Zod
+
+```sh
+npm i zod
+```
+
+#### 2 - Add more environment variables 
+
+.env
+
+```ini
+# Node/App Environment - e.g. "development", "test" or "production"
+NODE_ENV="development"
+
+# Application http port - e.g. 3333
+HTTP_PORT=3333
+
+# SQLite database path - e.g. "./db/app.db"
+DATABASE_PATH='./db/app.db'
+```
+
+.env.example
+
+```ini
+# Node/App Environment - e.g. "development", "test" or "production"
+NODE_ENV=
+
+# Application http port - e.g. 3333
+HTTP_PORT=
+
+# SQLite database path - e.g. "./db/app.db"
+DATABASE_PATH=
+```
+
+#### 3 - Create validators folder and env.ts file
+
+```js
+import "dotenv/config"
+import { z } from 'zod'
+
+// Rules for environment variables
+const envSchema = z.object({
+    NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+    HTTP_PORT: z.coerce.number().default(3333),
+    DATABASE_PATH: z.string()
+})
+
+// Validate environment variables
+const _env = envSchema.safeParse(process.env)
+if (_env.success === false) {
+    console.error('Invalid environment variables:', _env.error.format())
+    throw new Error('Invalid environment variables')
+}
+// Export the validated environment variables
+export const env = _env.data
+```
+
+#### 4 - Replace variables in database.ts 
+
+```js
+// add
+import { env } from './validators/env.js';
+// replace
+filename: env.DATABASE_PATH
+```
+
+#### 5 - Replace 3333 port for variable in server.ts 
+
+```js
+// remove
+import "dotenv/config"
+// replace to
+import { env } from './validators/env.js';
+// and remove
+3333
+// replace to
+port: env.HTTP_PORT
+```
+
+---
+
+

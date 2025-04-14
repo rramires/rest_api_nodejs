@@ -1,9 +1,10 @@
+import { env } from './validators/env.js';
 import knex, { Knex } from 'knex';
 
 export const config: Knex.Config = {
     client: 'better-sqlite3',
     connection: {
-        filename: String(process.env.DATABASE_URL)
+        filename: env.DATABASE_PATH
     },
     useNullAsDefault: true,
     migrations: {

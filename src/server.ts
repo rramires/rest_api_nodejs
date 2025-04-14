@@ -1,4 +1,4 @@
-import "dotenv/config";
+import { env } from './validators/env.js';
 //
 import fastify from 'fastify'
 import { knexConn } from './database.js'
@@ -28,7 +28,7 @@ app.get('/db', async () => {
 	return transactions
 })
 
-app.listen({ port: 3333 }, (err, address) => {
+app.listen({ port: env.HTTP_PORT }, (err, address) => {
 	if (err) {
 		console.error(err)
 		process.exit(1)
