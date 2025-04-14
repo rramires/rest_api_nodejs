@@ -199,7 +199,7 @@ npm run knex -- -h
 #### 9 - Creating the first migration (e.g. entity documents)
 
 ```sh
-npm run knex -- migrate:make create-documents 
+npm run knex -- migrate:make create-transactions 
 ```
 
 #### 10 - If you get an error in VSCode PROBLEMS because these .ts are outside the rootDir.
@@ -211,5 +211,67 @@ npm run knex -- migrate:make create-documents
 	"db/migrations"
 ]
 ```
+
+#### 10 - Adding table in migration
+
+```js
+// in up function
+await knex.schema.createTable("transactions", (table) => {
+        table.uuid("id").primary()
+        table.text("title").notNullable()
+        table.decimal("amount", 14, 2).notNullable()
+        table.timestamp("created_at").defaultTo(knex.fn.now()).notNullable()
+    })
+// in down function
+await knex.schema.dropTableIfExists("transactions")
+```
+
+#### 11 - Execute migration
+
+```sh
+npm run knex -- migrate:latest 
+```
+
+#### 12 - Install SQLite Viewer extension  
+
+[SQLite Viewer](https://marketplace.visualstudio.com/items?itemName=qwtel.sqlite-viewer)
+
+* After installing, click on app.db and see the table **transactions** created by migration and the auxiliary tables
+
+#### 13 - Rollback migration
+
+```sh
+npm run knex -- migrate:rollback
+``` 
+
+* Go back to SQL Viewer, reload and see that the transactions table has been deleted.
+
+#### 14 - Add a new migration to create a new field
+
+```sh
+npm run knex -- migrate:make add-session-id-to-transactions
+```
+
+Migration content:
+
+```js
+// in up function
+await knex.schema.alterTable("transactions", (table) => {
+	table.uuid("session_id").after("id").nullable()
+})
+// in down function
+await knex.schema.alterTable("transactions", (table) => {
+	table.dropColumn("session_id")
+})
+```
+Execute again:
+
+```sh
+npm run knex -- migrate:latest 
+```
+#### 15 - View the creation in SQLite Viewer
+
+* Note: It is not necessary to rollback to create the new field. In this case, rollback was done for testing(or learning) purposes only.
+* Note: The session_id field was created at the end and not after the id, despite being specified in the migration. This is because SQLite does not support it. Other databases such as MySQL, Postgress etc would probably support it.
 
 ---
