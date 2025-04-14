@@ -303,3 +303,51 @@ http GET localhost:3333/db
 ```
 
 ---
+
+### Environment variables
+
+#### 1 - Install DotENV extension:
+
+[DotENV](https://marketplace.visualstudio.com/items?itemName=mikestead.dotenv)
+
+#### 2 - Create .env file in the root folder, with these variables:
+
+```ini
+# SQLite database path
+DATABASE_URL="./db/app.db"
+```
+
+#### 3 - Create .env.example, which will be added to the versioning in git:
+
+```ini
+# SQLite database path, e.g. "./db/app.db"
+DATABASE_URL=
+```
+
+#### 4 - Install DotENV
+
+```sh
+npm i dotenv
+```
+
+#### 5 - Import/call DotENV at the beginning of the server.ts file  
+
+* It is important that DotENV is loaded first of all, in the first app file, to be available to the other modules.  
+* DotENV will inject all .env variables into process.env  
+
+```js
+import "dotenv/config";
+// before this
+import fastify from 'fastify'
+```
+
+#### 6 - Replace the path provided in database.ts with the one from the environment variable  
+
+* It is possible to set a fixed default value using or ||  
+I personally don't like it
+
+```js
+filename: String(process.env.DATABASE_URL) // || './db/app.db' 
+```
+
+---

@@ -1,3 +1,5 @@
+import "dotenv/config";
+//
 import fastify from 'fastify'
 import { knexConn } from './database.js'
 import { randomUUID } from 'node:crypto'

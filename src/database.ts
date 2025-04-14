@@ -3,11 +3,11 @@ import knex, { Knex } from 'knex';
 export const config: Knex.Config = {
     client: 'better-sqlite3',
     connection: {
-        filename: './db/app.db'
+        filename: String(process.env.DATABASE_URL)
     },
     useNullAsDefault: true,
     migrations: {
-        directory: './db/migrations',
+        directory: `./db/migrations`,
         extension: 'ts'
     }
 }
