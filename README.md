@@ -566,15 +566,15 @@ http GET localhost:3333/transactions
 
 ---  
 
-### Creation "Real" App Routes
-
-#### 1 - Adding routes prefix in server.js
+### Adding Prefix to Routes
 
 * All entity routes start with the entity name. e.g.  
 POST in /transactions = insert  
 GET in /transactions = select  
 GET in /transactions/:id = select with filter, etc  
 So to make things easier, we will create the prefix as a parameter when registering the route.
+
+#### 1 - Adding prefix in server.js
 
 ```js
 app.register(helloRoute, {
