@@ -1,36 +1,18 @@
 import { env } from './validators/env.js'
 //
 import fastify from 'fastify'
-import { knexConn } from './database.js'
-import { randomUUID } from 'node:crypto'
-
+//
 import { helloRoute } from './routes/hello.js'
+import { transactionsRoutes } from './routes/transactions.js'
 
-
+// The application
 const app = fastify()
 
 // Routes
 app.register(helloRoute)
+app.register(transactionsRoutes)
 
-
-app.get('/db', async () => {
-	// insert 
-	const transaction = await knexConn('transactions').insert({
-		id: randomUUID(),
-		title: 'Transaction 1',
-		amount: 100,
-	}).returning('*')
-	console.log('Inserted:\n', transaction[0], '\n\n');
-
-	// select
-	const transactions = await knexConn('transactions').select('*')
-		.where('amount', '=', 100)
-	//console.log(transactions);.
-	console.log('Select:\n', transactions);
-
-	return transactions
-})
-
+// Start the server
 app.listen({ port: env.HTTP_PORT }, (err, address) => {
 	if (err) {
 		console.error(err)

@@ -463,7 +463,21 @@ export async function helloRoute(app: FastifyInstance) {
 }
 ```
 
-#### 3 - Add this route in server.ts
+#### 3 - Let's create another route to test the connection to the database
+
+```js
+// import 
+import { knexConn } from './../database.js'
+// add after hello route
+app.get('/hellodb', async () => {
+    // select for testing 
+    const result = await knexConn.raw('select 1+9 as result')
+    //console.log(result[0].result)
+    return `Database OK! Result from select is: ${result[0].result}`
+})
+```
+
+#### 4 - Add this route in server.ts
 
 ```js
 // import
@@ -473,15 +487,81 @@ import { helloRoute } from './routes/hello.js'
 app.register(helloRoute)
 ```
 
-#### 4 - Running the App:
+#### 5 - Running the App:
 
 ```sh
 npm run dev
 ```
 
-#### 5 - Access via HTTPie or in your browser:
+#### 6 - Access via HTTPie or in your browser:
 
 ```sh
 http GET localhost:3333/hello
+and
+http GET localhost:3333/hellodb
 ```
 
+#### 7 - Create in the routes folder transactions.ts file and add skeleton of route
+ 
+```js
+import { FastifyInstance } from "fastify"
+
+export async function yourRoutes(app: FastifyInstance) {
+    // Routes
+
+}
+```
+
+#### 8 - Cut the "db" route from server.ts and paste it here
+
+* Replace **db** route to **transactions** route
+
+```js
+import { FastifyInstance } from "fastify"
+import { knexConn } from './../database.js'
+import { randomUUID } from 'node:crypto'
+
+export async function transactionsRoutes(app: FastifyInstance) {
+    // Routes
+    app.get('/transactions', async () => {
+        // insert 
+        const transaction = await knexConn('transactions').insert({
+            id: randomUUID(),
+            title: 'Transaction 1',
+            amount: 100,
+        }).returning('*')
+        console.log('Inserted:\n', transaction[0], '\n\n');
+
+        // select
+        const transactions = await knexConn('transactions').select('*')
+            .where('amount', '=', 100)
+        //console.log(transactions);.
+        console.log('Select:\n', transactions);
+
+        return transactions
+    })
+}
+```
+
+#### 9 - Add this route in server.ts
+
+```js
+// import
+import { transactionsRoutes } from './routes/transactions.js'
+// Routes
+app.register(transactionsRoutes)
+```
+
+#### 10 - Running the App:
+
+```sh
+npm run dev
+```
+
+#### 11 - Access via HTTPie or in your browser:
+
+```sh
+http GET localhost:3333/transactions
+```
+
+---  
