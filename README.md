@@ -435,4 +435,53 @@ port: env.HTTP_PORT
 
 ---
 
+### Organizing the Routes
+
+#### 1 - Create the routes folder and the hello.ts file
+
+The skeleton of routes
+
+```js
+import { FastifyInstance } from "fastify"
+
+export async function yourRoutes(app: FastifyInstance) {
+    // Routes
+
+}
+```
+
+#### 2 - Cut the "hello" route from server.ts and paste it here 
+
+```js
+import { FastifyInstance } from "fastify";
+
+export async function helloRoute(app: FastifyInstance) {
+    // Routes
+    app.get('/hello', async () => {
+        return 'Hello from Fastify!'
+    })
+}
+```
+
+#### 3 - Add this route in server.ts
+
+```js
+// import
+import { helloRoute } from './routes/hello.js'
+// add after the app instance "const app = fastify()"
+// Routes
+app.register(helloRoute)
+```
+
+#### 4 - Running the App:
+
+```sh
+npm run dev
+```
+
+#### 5 - Access via HTTPie or in your browser:
+
+```sh
+http GET localhost:3333/hello
+```
 

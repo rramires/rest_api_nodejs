@@ -1,14 +1,17 @@
-import { env } from './validators/env.js';
+import { env } from './validators/env.js'
 //
 import fastify from 'fastify'
 import { knexConn } from './database.js'
 import { randomUUID } from 'node:crypto'
 
+import { helloRoute } from './routes/hello.js'
+
+
 const app = fastify()
 
-app.get('/hello', async () => {
-	return 'Hello from Fastify!'
-})
+// Routes
+app.register(helloRoute)
+
 
 app.get('/db', async () => {
 	// insert 
