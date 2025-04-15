@@ -9,8 +9,12 @@ import { transactionsRoutes } from './routes/transactions.js'
 const app = fastify()
 
 // Routes
-app.register(helloRoute)
-app.register(transactionsRoutes)
+app.register(helloRoute, {
+	prefix: '/hello'
+})
+app.register(transactionsRoutes, {
+	prefix: '/transactions'
+})
 
 // Start the server
 app.listen({ port: env.HTTP_PORT }, (err, address) => {

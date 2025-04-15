@@ -565,3 +565,56 @@ http GET localhost:3333/transactions
 ```
 
 ---  
+
+### Creation "Real" App Routes
+
+#### 1 - Adding routes prefix in server.js
+
+* All entity routes start with the entity name. e.g.  
+POST in /transactions = insert  
+GET in /transactions = select  
+GET in /transactions/:id = select with filter, etc  
+So to make things easier, we will create the prefix as a parameter when registering the route.
+
+```js
+app.register(helloRoute, {
+	prefix: '/hello'
+})
+app.register(transactionsRoutes, {
+	prefix: '/transactions'
+})
+```
+
+#### 2 - Fixing the hello route, removing hello
+
+```js
+app.get('/', async () => {
+    return 'Hello from Fastify!'
+})
+app.get('/db', async () => {
+// ...
+```
+
+#### 2 - Fixing the transactions route, removing transactions
+
+```js
+app.get('/', async () => {
+    // insert 
+    ///const transaction ...
+```
+
+#### 3 - Running the App:
+
+```sh
+npm run dev
+```
+
+#### 4 - Access via HTTPie or in your browser:
+
+```sh
+http GET localhost:3333/hello
+and
+http GET localhost:3333/hello/db
+and
+http GET localhost:3333/transactions
+```

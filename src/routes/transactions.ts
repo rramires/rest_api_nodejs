@@ -4,7 +4,7 @@ import { randomUUID } from 'node:crypto'
 
 export async function transactionsRoutes(app: FastifyInstance) {
     // Routes
-    app.get('/transactions', async () => {
+    app.get('/', async () => {
         // insert 
         const transaction = await knexConn('transactions').insert({
             id: randomUUID(),
