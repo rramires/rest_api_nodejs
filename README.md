@@ -618,3 +618,95 @@ http GET localhost:3333/hello/db
 and
 http GET localhost:3333/transactions
 ```
+
+---
+
+### Creating a Real Transactions
+
+
+#### 1 - Adding insert route in transaction.ts
+
+* Remove the entire app.get route example first
+
+```js
+// import
+import { z } from 'zod'
+
+// in transactionsRoutes
+
+// Entity
+const entity = 'transactions'
+
+// Insert route
+app.post('/', async (request, reply) => {
+
+    // validation schema
+    const bodySchema = z.object({
+        title: z.string(),
+        amount: z.number(),
+        type: z.enum(['credit', 'debit'])
+    })
+    const { title, amount, type } = bodySchema.parse(request.body)
+
+    // insert
+    await knexConn(entity).insert({
+        id: randomUUID(),
+        title,
+        amount: type === 'credit' ? amount : (amount) * -1
+    })
+    // 201 Created
+    return reply.status(201).send()
+})
+```
+
+#### 2 - Delete app.db
+
+```sh
+rm db/app.db 
+```
+
+#### 3 - Run migrations again to recreate the database
+
+```sh
+npm run knex -- migrate:latest 
+```
+
+#### 4 - Create a new request collection in Insominia(Rest API Node)
+
+#### 5 - Add Two POSTs methods
+
+* Create Transaction Credit
+
+```json
+// POST http://127.0.0.1:3333/transactions
+{
+	"title": "Freelancer Job",
+	"amount": 8000,
+	"type": "credit"
+}
+```
+
+* Create Transaction Debit
+
+```json
+// POST http://127.0.0.1:3333/transactions
+{
+	"title": "Buy Laptop",
+	"amount": 3000,
+	"type": "debit"
+}
+```
+
+#### 6 - Running the App:
+
+```sh
+npm run dev
+```
+
+#### 6 - Send requests and see them in the database
+
+--- 
+
+
+
+
