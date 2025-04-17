@@ -621,7 +621,7 @@ http GET localhost:3333/transactions
 
 ---
 
-### Creating a Real Transactions
+### Creating a Real Route
 
 #### 1 - Adding insert route in transaction.ts
 
@@ -633,7 +633,7 @@ import { z } from 'zod'
 
 // in transactionsRoutes
 
-// Insert route
+// Insert
 app.post('/', async (request, reply) => {
 
     // validation schema
@@ -703,7 +703,7 @@ npm run dev
 
 --- 
 
-### Adding Yypes in Knes
+### Adding Types in Knes
 
 #### 1 - Create a new folder in src called **@types**  
 * You'll see it at the top.
@@ -744,7 +744,69 @@ await knexConn('transactions').insert({ // complete 'transactions'
 })
 ```
 
+---
 
+### Creating Listing Routes
 
+#### 1 - Adding select All route
+
+```js
+// Select All
+app.get('/', async () => {
+
+    // select
+    const transactions = await knexConn('transactions').select()
+
+    // if not found
+    if (!transactions) {
+        return { status: 404, message: 'Transactions not found' }
+    }
+    // if found 200 OK
+    return { transactions }
+})
+```
+
+#### 2 - Adding select Unique route
+
+```js
+// Select Unique
+app.get('/:id', async (request) => {
+
+    // validation schema
+    const paramsSchema = z.object({
+        id: z.string().uuid()
+    })
+    const { id } = paramsSchema.parse(request.params)
+
+    // select
+    const transaction = await knexConn('transactions').where('id', id).first()
+
+    // if not found
+    if (!transaction) {
+        return { status: 404, message: 'Transaction not found' }
+    }
+    // if found 200 OK
+    return transaction
+})
+```
+
+#### 4 - In Insominia, create two requestes
+
+#### 5 - Add Two POSTs methods
+
+```json
+// List All Transactions
+// GET http://127.0.0.1:3333/transactions
+// and
+// http://127.0.0.1:3333/transactions/ insert transaction id here 
+// e.g.  
+// http://127.0.0.1:3333/transactions/15eec511-85df-4258-bbd9-7579a85e689d
+```
+
+* Try List Unique Transaction, with an invalid id: http://127.0.0.1:3333/transactions/123  
+  It should return error 500, because of paramsSchema validating the uuid  
+
+  Try to, using other valid uiid: **5fd50b52-5a8d-46b7-8b0a-91376bcd3f24**  
+  Should return status 404 + Transaction not found  
 
 

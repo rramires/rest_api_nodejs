@@ -5,7 +5,7 @@ import { z } from 'zod'
 
 export async function transactionsRoutes(app: FastifyInstance) {
 
-    // Insert route
+    // Insert
     app.post('/', async (request, reply) => {
 
         // validation schema
@@ -24,5 +24,39 @@ export async function transactionsRoutes(app: FastifyInstance) {
         })
         // 201 Created
         return reply.status(201).send()
+    })
+
+    // Select All
+    app.get('/', async () => {
+
+        // select
+        const transactions = await knexConn('transactions').select()
+
+        // if not found
+        if (!transactions) {
+            return { status: 404, message: 'Transactions not found' }
+        }
+        // if found 200 OK
+        return { transactions }
+    })
+
+    // Select Unique 
+    app.get('/:id', async (request) => {
+
+        // validation schema
+        const paramsSchema = z.object({
+            id: z.string().uuid()
+        })
+        const { id } = paramsSchema.parse(request.params)
+
+        // select
+        const transaction = await knexConn('transactions').where('id', id).first()
+
+        // if not found
+        if (!transaction) {
+            return { status: 404, message: 'Transaction not found' }
+        }
+        // if found 200 OK
+        return transaction
     })
 }
