@@ -623,7 +623,6 @@ http GET localhost:3333/transactions
 
 ### Creating a Real Transactions
 
-
 #### 1 - Adding insert route in transaction.ts
 
 * Remove the entire app.get route example first
@@ -633,9 +632,6 @@ http GET localhost:3333/transactions
 import { z } from 'zod'
 
 // in transactionsRoutes
-
-// Entity
-const entity = 'transactions'
 
 // Insert route
 app.post('/', async (request, reply) => {
@@ -649,7 +645,7 @@ app.post('/', async (request, reply) => {
     const { title, amount, type } = bodySchema.parse(request.body)
 
     // insert
-    await knexConn(entity).insert({
+    await knexConn('transactions').insert({
         id: randomUUID(),
         title,
         amount: type === 'credit' ? amount : (amount) * -1
@@ -706,6 +702,48 @@ npm run dev
 #### 6 - Send requests and see them in the database
 
 --- 
+
+### Adding Yypes in Knes
+
+#### 1 - Create a new folder in src called **@types**  
+* You'll see it at the top.
+
+#### 2 - Create a new file called **knex.d.ts** and
+
+* This will override a method from the Knex module, allowing complete code of table names and fields.
+
+```js
+// eslint-disable-next-line 
+import { Knex } from 'knex';
+
+declare module 'knex/types/tables.js' {
+    interface Tables {
+        // Tables 
+        transactions: {
+            id: string
+            title: string
+            amount: number
+            created_at: string
+            session_id?: string
+        }
+    }
+}
+```
+
+#### 3 - After creating the table typing file, autocomplete works on methods, in table name, in table fields and generates error if field does not exist
+
+* Try/test deleting the table name and fields and typing again.  
+Then don't forget to undo the changes.  
+
+```js
+await knexConn('transactions').insert({ // complete 'transactions'
+    id: randomUUID(), // complete id
+    title, // complete title
+    amount: type === 'credit' ? amount : (amount) * -1, // complete amount
+    test: 1 // error because it was not defined in knex.d.ts
+})
+```
+
 
 
 

@@ -5,9 +5,6 @@ import { z } from 'zod'
 
 export async function transactionsRoutes(app: FastifyInstance) {
 
-    // Entity
-    const entity = 'transactions'
-
     // Insert route
     app.post('/', async (request, reply) => {
 
@@ -20,7 +17,7 @@ export async function transactionsRoutes(app: FastifyInstance) {
         const { title, amount, type } = bodySchema.parse(request.body)
 
         // insert
-        await knexConn(entity).insert({
+        await knexConn('transactions').insert({
             id: randomUUID(),
             title,
             amount: type === 'credit' ? amount : (amount) * -1
