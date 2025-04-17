@@ -790,17 +790,16 @@ app.get('/:id', async (request) => {
 })
 ```
 
-#### 4 - In Insominia, create two requestes
-
-#### 5 - Add Two POSTs methods
+#### 4 - In Insominia, create two requests using GET in methods
 
 ```json
 // List All Transactions
 // GET http://127.0.0.1:3333/transactions
 // and
-// http://127.0.0.1:3333/transactions/ insert transaction id here 
+// List Unique Transaction
+// GET http://127.0.0.1:3333/transactions/(insert transaction id here)
 // e.g.  
-// http://127.0.0.1:3333/transactions/15eec511-85df-4258-bbd9-7579a85e689d
+// GET http://127.0.0.1:3333/transactions/15eec511-85df-4258-bbd9-7579a85e689d
 ```
 
 * Try List Unique Transaction, with an invalid id: http://127.0.0.1:3333/transactions/123  
@@ -808,5 +807,26 @@ app.get('/:id', async (request) => {
 
   Try to, using other valid uiid: **5fd50b52-5a8d-46b7-8b0a-91376bcd3f24**  
   Should return status 404 + Transaction not found  
+
+#### 5 - Adding summary route
+
+```js
+// Select SUM
+app.get('/summary', async () => {
+
+    // select
+    const summary = await knexConn('transactions').sum('amount', { as: 'balance' }).first()
+    // 200 OK
+    return summary || { balance: 0 }
+})
+```
+
+#### 4 - In Insominia, create request using GET get method
+
+```json
+// List Summary
+// GET http://127.0.0.1:3333/transactions/summary 
+// Returns {"balance":5000}
+```
 
 

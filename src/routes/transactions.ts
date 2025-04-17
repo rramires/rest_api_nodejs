@@ -40,6 +40,15 @@ export async function transactionsRoutes(app: FastifyInstance) {
         return { transactions }
     })
 
+    // Select SUM
+    app.get('/summary', async () => {
+
+        // select
+        const summary = await knexConn('transactions').sum('amount', { as: 'balance' }).first()
+        // 200 OK
+        return summary || { balance: 0 }
+    })
+
     // Select Unique 
     app.get('/:id', async (request) => {
 
