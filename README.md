@@ -28,7 +28,8 @@ Add **type": "module"** at the beginning along with the project name, version et
 
 ```json
 "rootDir": "./src",
-and
+```
+```json
 "outDir": "./dist",
 ```
 
@@ -46,7 +47,7 @@ npm run compile
 
 #### 7 - If the compiler picks up any unwanted files, just add the exclusion of that file, or folder, at the end of tsconfig.json
 
-```json
+```js
 ...
 "skipLibCheck": true 
 } 
@@ -74,7 +75,7 @@ npm i fastify
 
 #### 2 - Rename or create server.ts and add Fastify Hello:
 
-```javascript
+```js
 import fastify from 'fastify'
 
 const app = fastify()
@@ -671,10 +672,12 @@ npm run knex -- migrate:latest
 
 #### 5 - Add Two POSTs methods
 
-* Create Transaction Credit
+* Create Transaction Credit 1  
+POST http://127.0.0.1:3333/transactions  
+
+body:  
 
 ```json
-// POST http://127.0.0.1:3333/transactions
 {
 	"title": "Freelancer Job",
 	"amount": 8000,
@@ -682,10 +685,12 @@ npm run knex -- migrate:latest
 }
 ```
 
-* Create Transaction Debit
+* Create Transaction Debit 1  
+// POST http://127.0.0.1:3333/transactions  
+
+body: 
 
 ```json
-// POST http://127.0.0.1:3333/transactions
 {
 	"title": "Buy Laptop",
 	"amount": 3000,
@@ -792,7 +797,7 @@ app.get('/:id', async (request) => {
 
 #### 4 - In Insominia, create two requests using GET in methods
 
-```json
+```sh
 // List All Transactions
 // GET http://127.0.0.1:3333/transactions
 // and
@@ -823,7 +828,7 @@ app.get('/summary', async () => {
 
 #### 4 - In Insominia, create request using GET get method
 
-```json
+```sh
 // List Summary
 // GET http://127.0.0.1:3333/transactions/summary 
 // Returns {"balance":5000}
@@ -877,16 +882,24 @@ session_id: sessionId
 
 #### 4 - Creating more two transactions in Insomnia
 
+* POST http://127.0.0.1:3333/transactions  
+
+Create Transaction Credit 2
+
+body: 
+
 ```json
-// POST http://127.0.0.1:3333/transactions
-// Create Transaction Credit 2
 {
 	"title": "Dividends Received",
 	"amount": 4500,
 	"type": "credit"
 }
-// and
-// Create Transaction Debit 2
+```
+And create Transaction Debit 2  
+
+body: 
+
+```json
 {
 	"title": "Buy Cellphone",
 	"amount": 500,
@@ -896,11 +909,10 @@ session_id: sessionId
 
 #### 5 - Check using List All Transactions in Insomnia
 
-* Note that the session_id field of the last two records inserted has the same session_id
+* Note that the session_id field of the last two records inserted has the same session_id  
+GET http://127.0.0.1:3333/transactions
 
 ```json
-// GET http://127.0.0.1:3333/transactions
-// e.g.
 {
     "id": "a3cc59c0-ee2b-4f4a-96f7-249cd7cafae1",
     "title": "Dividends Received",
