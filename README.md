@@ -829,4 +829,90 @@ app.get('/summary', async () => {
 // Returns {"balance":5000}
 ```
 
+---
 
+### Working with cookies in Fastify
+
+#### 1 - Install Fastify cookies
+
+```sh
+npm i @fastify/cookie
+```
+
+#### 2 - Register cookie bundle, before routes
+
+```javascript
+// import
+import cookie from '@fastify/cookie'
+
+// const app = fastify()
+
+// Plugins
+app.register(cookie)
+
+// Routes ...
+```
+
+#### 3 - Adding session cookie in transactions.ts 
+
+```javascript
+// after const { title, amount, type...
+
+// get cookie if exists or add randon uuid
+let sessionId = request.cookies.sessionId ? request.cookies.sessionId : randomUUID()
+
+// set cookie   
+reply.setCookie('sessionId', sessionId, {
+    path: '/',
+    domain: 'localhost',
+    httpOnly: true,
+    secure: false, // set to true if using https
+    maxAge: 60 * 60 * 24 * 7 // 7 days
+})
+
+// Add sessionId in the insert object, after amount
+session_id: sessionId
+// 
+```
+
+#### 4 - Creating more two transactions in Insomnia
+
+```json
+// POST http://127.0.0.1:3333/transactions
+// Create Transaction Credit 2
+{
+	"title": "Dividends Received",
+	"amount": 4500,
+	"type": "credit"
+}
+// and
+// Create Transaction Debit 2
+{
+	"title": "Buy Cellphone",
+	"amount": 500,
+	"type": "debit"
+}
+```
+
+#### 5 - Check using List All Transactions in Insomnia
+
+* Note that the session_id field of the last two records inserted has the same session_id
+
+```json
+// GET http://127.0.0.1:3333/transactions
+// e.g.
+{
+    "id": "a3cc59c0-ee2b-4f4a-96f7-249cd7cafae1",
+    "title": "Dividends Received",
+    "amount": 4500,
+    "created_at": "2025-04-18 02:44:22",
+    "session_id": "0d5f85d8-7899-4499-b572-fcd67a277357"
+},
+{
+    "id": "ea6c4820-1f8c-43ce-b447-9f8da723cb72",
+    "title": "Buy Cellphone",
+    "amount": -500,
+    "created_at": "2025-04-18 02:44:26",
+    "session_id": "0d5f85d8-7899-4499-b572-fcd67a277357"
+}
+```

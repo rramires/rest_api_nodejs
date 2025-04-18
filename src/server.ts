@@ -1,12 +1,16 @@
 import { env } from './validators/env.js'
 //
 import fastify from 'fastify'
+import cookie from '@fastify/cookie'
 //
 import { helloRoute } from './routes/hello.js'
 import { transactionsRoutes } from './routes/transactions.js'
 
 // The application
 const app = fastify()
+
+// Plugins
+app.register(cookie)
 
 // Routes
 app.register(helloRoute, {
