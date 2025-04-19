@@ -131,7 +131,7 @@ npm install @types/better-sqlite3 -D
 #### 3 - Create Knex-SQLite connection in database.ts file
 
 ```js
-import knex, { Knex } from 'knex';
+import knex, { Knex } from 'knex'
 
 export const config: Knex.Config = {
     client: 'better-sqlite3',
@@ -145,7 +145,7 @@ export const config: Knex.Config = {
     }
 }
 
-export const knexConn: Knex = knex(config);
+export const knexConn: Knex = knex(config)
 ```
 
 #### 4 - Create db folder in root and add to .gitignore
@@ -285,13 +285,13 @@ app.get('/db', async () => {
 		title: 'Transaction 1',
 		amount: 100,
 	}).returning('*')
-	console.log('Inserted:\n', transaction[0], '\n\n');
+	console.log('Inserted:\n', transaction[0], '\n\n')
 
 	// select
 	const transactions = await knexConn('transactions').select('*')
 		.where('amount', '=', 100)
-	//console.log(transactions);.
-	console.log('Select:\n', transactions);
+	//console.log(transactions).
+	console.log('Select:\n', transactions)
 
 	return transactions
 })
@@ -337,7 +337,7 @@ npm i dotenv
 * DotENV will inject all .env variables into process.env  
 
 ```js
-import "dotenv/config";
+import "dotenv/config"
 // before this
 import fastify from 'fastify'
 ```
@@ -416,7 +416,7 @@ export const env = _env.data
 
 ```js
 // add
-import { env } from './validators/env.js';
+import { env } from './validators/env.js'
 // replace
 filename: env.DATABASE_PATH
 ```
@@ -427,7 +427,7 @@ filename: env.DATABASE_PATH
 // remove
 import "dotenv/config"
 // replace to
-import { env } from './validators/env.js';
+import { env } from './validators/env.js'
 // and remove
 3333
 // replace to
@@ -454,7 +454,7 @@ export async function yourRoutes(app: FastifyInstance) {
 #### 2 - Cut the "hello" route from server.ts and paste it here 
 
 ```js
-import { FastifyInstance } from "fastify";
+import { FastifyInstance } from "fastify"
 
 export async function helloRoute(app: FastifyInstance) {
     // Routes
@@ -531,13 +531,13 @@ export async function transactionsRoutes(app: FastifyInstance) {
             title: 'Transaction 1',
             amount: 100,
         }).returning('*')
-        console.log('Inserted:\n', transaction[0], '\n\n');
+        console.log('Inserted:\n', transaction[0], '\n\n')
 
         // select
         const transactions = await knexConn('transactions').select('*')
             .where('amount', '=', 100)
-        //console.log(transactions);.
-        console.log('Select:\n', transactions);
+        //console.log(transactions).
+        console.log('Select:\n', transactions)
 
         return transactions
     })
@@ -686,7 +686,7 @@ body:
 ```
 
 * Create Transaction Debit 1  
-// POST http://127.0.0.1:3333/transactions  
+POST http://127.0.0.1:3333/transactions  
 
 body: 
 
@@ -719,7 +719,7 @@ npm run dev
 
 ```js
 // eslint-disable-next-line 
-import { Knex } from 'knex';
+import { Knex } from 'knex'
 
 declare module 'knex/types/tables.js' {
     interface Tables {
@@ -797,20 +797,24 @@ app.get('/:id', async (request) => {
 
 #### 4 - In Insominia, create two requests using GET in methods
 
+List All Transactions  
+GET  
+
 ```sh
-// List All Transactions
-// GET http://127.0.0.1:3333/transactions
-// and
-// List Unique Transaction
-// GET http://127.0.0.1:3333/transactions/(insert transaction id here)
-// e.g.  
-// GET http://127.0.0.1:3333/transactions/15eec511-85df-4258-bbd9-7579a85e689d
-```
+http://127.0.0.1:3333/transactions
+``` 
+
+List Unique Transaction   
+GET
+
+```sh
+http://127.0.0.1:3333/transactions/insert-transaction-id-here
+``` 
 
 * Try List Unique Transaction, with an invalid id: http://127.0.0.1:3333/transactions/123  
   It should return error 500, because of paramsSchema validating the uuid  
 
-  Try to, using other valid uiid: **5fd50b52-5a8d-46b7-8b0a-91376bcd3f24**  
+* Try to, using other valid uiid: **5fd50b52-5a8d-46b7-8b0a-91376bcd3f24**  
   Should return status 404 + Transaction not found  
 
 #### 5 - Adding summary route
@@ -828,11 +832,14 @@ app.get('/summary', async () => {
 
 #### 4 - In Insominia, create request using GET get method
 
+List Summary   
+GET
+
 ```sh
-// List Summary
-// GET http://127.0.0.1:3333/transactions/summary 
-// Returns {"balance":5000}
+http://127.0.0.1:3333/transactions/summary
 ```
+
+* Returns {"balance":5000}  
 
 ---
 
@@ -909,7 +916,7 @@ body:
 
 #### 5 - Check using List All Transactions in Insomnia
 
-* Note that the session_id field of the last two records inserted has the same session_id  
+* Note that the **session_id** field of the last two records inserted has the same session_id  
 GET http://127.0.0.1:3333/transactions
 
 ```json

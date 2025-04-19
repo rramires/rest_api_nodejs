@@ -1,5 +1,5 @@
-import { env } from './validators/env.js';
-import knex, { Knex } from 'knex';
+import { env } from './validators/env.js'
+import knex, { Knex } from 'knex'
 
 export const config: Knex.Config = {
     client: 'better-sqlite3',
