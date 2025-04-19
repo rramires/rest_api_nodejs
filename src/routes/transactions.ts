@@ -2,6 +2,7 @@ import { FastifyInstance } from "fastify"
 import { knexConn } from './../database.js'
 import { randomUUID } from 'node:crypto'
 import { z } from 'zod'
+import { checkSessionId } from "../middlewares/check-session-id.js"
 
 export async function transactionsRoutes(app: FastifyInstance) {
 
@@ -22,9 +23,6 @@ export async function transactionsRoutes(app: FastifyInstance) {
         // set cookie   
         reply.setCookie('sessionId', sessionId, {
             path: '/',
-            domain: 'localhost',
-            httpOnly: true,
-            secure: false, // set to true if using https
             maxAge: 60 * 60 * 24 * 7 // 7 days
         })
 
@@ -40,10 +38,17 @@ export async function transactionsRoutes(app: FastifyInstance) {
     })
 
     // Select All
-    app.get('/', async () => {
+    app.get('/', {
+        preHandler: [checkSessionId]
+    }, async (request, reply) => {
+
+        // get cookie
+        const { sessionId } = request.cookies
 
         // select
-        const transactions = await knexConn('transactions').select()
+        const transactions = await knexConn('transactions')
+            .where('session_id', sessionId)
+            .select()
 
         // if not found
         if (!transactions) {
@@ -54,7 +59,9 @@ export async function transactionsRoutes(app: FastifyInstance) {
     })
 
     // Select SUM
-    app.get('/summary', async () => {
+    app.get('/summary', {
+        preHandler: [checkSessionId]
+    }, async () => {
 
         // select
         const summary = await knexConn('transactions').sum('amount', { as: 'balance' }).first()
@@ -63,7 +70,9 @@ export async function transactionsRoutes(app: FastifyInstance) {
     })
 
     // Select Unique 
-    app.get('/:id', async (request) => {
+    app.get('/:id', {
+        preHandler: [checkSessionId]
+    }, async (request) => {
 
         // validation schema
         const paramsSchema = z.object({

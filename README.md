@@ -876,9 +876,6 @@ let sessionId = request.cookies.sessionId ? request.cookies.sessionId : randomUU
 // set cookie   
 reply.setCookie('sessionId', sessionId, {
     path: '/',
-    domain: 'localhost',
-    httpOnly: true,
-    secure: false, // set to true if using https
     maxAge: 60 * 60 * 24 * 7 // 7 days
 })
 
@@ -935,3 +932,140 @@ GET http://127.0.0.1:3333/transactions
     "session_id": "0d5f85d8-7899-4499-b572-fcd67a277357"
 }
 ```
+
+--- 
+
+### Validating the existence of cookies
+
+#### 1 - Add in transactions.ts in the Select All method
+
+```javascript
+// add
+// check session id
+const sessionId = request.cookies.sessionId
+if (!sessionId) {
+    // 401 Unauthorized
+    return reply.status(401).send({ error: 'Unauthorized' })
+}
+
+// and filter select by sessionId
+const transactions = await knexConn('transactions')
+    .where('session_id', sessionId)
+    .select()
+```
+
+#### 2 - Check using List All Transactions in Insomnia
+
+* GET http://127.0.0.1:3333/transactions  
+The result is:
+
+```json
+{ "error": "Unauthorized" }
+```
+
+#### 3 - But if you create a new transactions the id filter will only bring the new ones
+
+* Create Transaction Credit 1  
+Create Transaction Debid 1  
+POST http://127.0.0.1:3333/transactions  
+
+* GET http://127.0.0.1:3333/transactions  
+The result is:
+
+```json
+{
+	"transactions": [
+		{
+			"id": "6b4b058e-1fd2-4b8c-a6ad-99c0e936890f",
+			"title": "Freelancer Job",
+			"amount": 8000,
+			"created_at": "2025-04-19 02:44:07",
+			"session_id": "bfaad0ae-45a4-4b29-90bf-b8c9875c58eb"
+		},
+		{
+			"id": "8decaeda-3224-42ea-903a-621394c78c36",
+			"title": "Freelancer Job",
+			"amount": -3000,
+			"created_at": "2025-04-19 02:44:17",
+			"session_id": "bfaad0ae-45a4-4b29-90bf-b8c9875c58eb"
+		}
+	]
+}
+```
+
+--- 
+
+### Adding middlewares
+
+* OK, Its works but we would have to check if the session id exists in other routes, like Summary and Select SUM, so let's separate this part into a middleware.
+
+#### 1 - Create a middlewares folder and check-session-id.ts file, with
+
+```js
+import { FastifyReply, FastifyRequest } from "fastify"
+
+export async function checkSessionId(request, reply) {
+    // check session id
+}
+```
+
+#### 2 - Cut part of id check from transactions.ts Select all and paste here
+
+```js
+export async function checkSessionId(request, reply) {
+    // check session id
+    const sessionId = request.cookies.sessionId
+    if (!sessionId) {
+        // 401 Unauthorized
+        return reply.status(401).send({ error: 'Unauthorized' })
+    }
+}
+```
+
+#### 3 - In transactions.ts add get cookie, to make it work again
+
+```js
+// get cookie
+const { sessionId } = request.cookies
+```
+
+#### 3 - And add the middleware after route path using preHandler
+
+```js
+// import 
+import { checkSessionId } from "../middlewares/check-session-id.js"
+
+// Select All
+app.get('/', {
+    preHandler: [checkSessionId]
+}, async (request, reply) => { //...
+```
+
+#### 4 - Repeat this for the other query routes
+
+```js
+ // Select SUM
+app.get('/summary', {
+    preHandler: [checkSessionId]
+}, async () => { // ...
+
+// Select Unique 
+app.get('/:id', {
+    preHandler: [checkSessionId]
+}, async (request) => { //...
+```
+
+#### 5 - Test the three routes in Insomnia
+
+* GET http://127.0.0.1:3333/transactions  
+GET http://127.0.0.1:3333/transactions/transaction_id  
+GET http://127.0.0.1:3333/transactions/summary  
+
+Operations should occur normally and return what is expected.
+
+#### 6 - Delete cookie in Insomnia and check if returns 401 error
+
+```json
+{ "error": "Unauthorized" }
+```
+
