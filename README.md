@@ -570,9 +570,9 @@ http GET localhost:3333/transactions
 ### Adding Prefix to Routes
 
 * All entity routes start with the entity name. e.g.  
-POST in /transactions = insert  
-GET in /transactions = select  
-GET in /transactions/:id = select with filter, etc  
+[POST] in /transactions = insert  
+[GET] in /transactions = select  
+[GET] in /transactions/:id = select with filter, etc  
 So to make things easier, we will create the prefix as a parameter when registering the route.
 
 #### 1 - Adding prefix in server.js
@@ -673,7 +673,7 @@ npm run knex -- migrate:latest
 #### 5 - Add Two POSTs methods
 
 * Create Transaction Credit 1  
-POST http://127.0.0.1:3333/transactions  
+[POST] http://127.0.0.1:3333/transactions  
 
 body:  
 
@@ -686,7 +686,7 @@ body:
 ```
 
 * Create Transaction Debit 1  
-POST http://127.0.0.1:3333/transactions  
+[POST] http://127.0.0.1:3333/transactions  
 
 body: 
 
@@ -795,17 +795,17 @@ app.get('/:id', async (request) => {
 })
 ```
 
-#### 4 - In Insominia, create two requests using GET in methods
+#### 4 - In Insominia, create two requests using [GET] in methods
 
 List All Transactions  
-GET  
+[GET]  
 
 ```sh
 http://127.0.0.1:3333/transactions
 ``` 
 
 List Unique Transaction   
-GET
+[GET]
 
 ```sh
 http://127.0.0.1:3333/transactions/insert-transaction-id-here
@@ -833,7 +833,7 @@ app.get('/summary', async () => {
 #### 4 - In Insominia, create request using GET get method
 
 List Summary   
-GET
+[GET]
 
 ```sh
 http://127.0.0.1:3333/transactions/summary
@@ -886,7 +886,7 @@ session_id: sessionId
 
 #### 4 - Creating more two transactions in Insomnia
 
-* POST http://127.0.0.1:3333/transactions  
+* [POST] http://127.0.0.1:3333/transactions  
 
 Create Transaction Credit 2
 
@@ -914,7 +914,7 @@ body:
 #### 5 - Check using List All Transactions in Insomnia
 
 * Note that the **session_id** field of the last two records inserted has the same session_id  
-GET http://127.0.0.1:3333/transactions
+[GET] http://127.0.0.1:3333/transactions
 
 ```json
 {
@@ -956,7 +956,7 @@ const transactions = await knexConn('transactions')
 
 #### 2 - Check using List All Transactions in Insomnia
 
-* GET http://127.0.0.1:3333/transactions  
+* [GET] http://127.0.0.1:3333/transactions  
 The result is:
 
 ```json
@@ -967,9 +967,9 @@ The result is:
 
 * Create Transaction Credit 1  
 Create Transaction Debid 1  
-POST http://127.0.0.1:3333/transactions  
+[POST] http://127.0.0.1:3333/transactions  
 
-* GET http://127.0.0.1:3333/transactions  
+* [GET] http://127.0.0.1:3333/transactions  
 The result is:
 
 ```json
@@ -1071,9 +1071,9 @@ const transaction = await knexConn('transactions')
 
 #### 6 - Test the three routes in Insomnia
 
-* GET http://127.0.0.1:3333/transactions  
-GET http://127.0.0.1:3333/transactions/transaction_id  
-GET http://127.0.0.1:3333/transactions/summary  
+* [GET] http://127.0.0.1:3333/transactions  
+[GET] http://127.0.0.1:3333/transactions/transaction_id  
+[GET] http://127.0.0.1:3333/transactions/summary  
 
 Operations should occur normally and return what is expected.
 
@@ -1176,9 +1176,9 @@ app.get('/:id', async (request) //...
 
 #### 8 - Test get routes again via Insomnia
 
-* GET http://127.0.0.1:3333/transactions  
-GET http://127.0.0.1:3333/transactions/transaction_id  
-GET http://127.0.0.1:3333/transactions/summary  
+* [GET] http://127.0.0.1:3333/transactions  
+[GET] http://127.0.0.1:3333/transactions/transaction_id  
+[GET] http://127.0.0.1:3333/transactions/summary  
 
 The result should be
 
@@ -1187,7 +1187,7 @@ The result should be
 ```
 
 * But if you test it now   
-POST http://127.0.0.1:3333/transactions
+[POST] http://127.0.0.1:3333/transactions
 
 ```json
 {"error":"Unauthorized123"}
@@ -1247,16 +1247,16 @@ app.register(privateTransactionsRoutes, {
 
 #### 11 - Delete the app.db, run the migration and test all routes again.
 
-```json
+```sh
 npm run knex -- migrate:latest     
 npm run dev 
 ```
-* Test
-[GET] http://127.0.0.1:3333/hello  
+   
+* [GET] http://127.0.0.1:3333/hello  
 [GET] http://127.0.0.1:3333/hello/db  
-GET http://127.0.0.1:3333/transactions  
-GET http://127.0.0.1:3333/transactions/transaction_id  
-GET http://127.0.0.1:3333/transactions/summary  
+[GET] http://127.0.0.1:3333/transactions  
+[GET] http://127.0.0.1:3333/transactions/transaction_id  
+[GET] http://127.0.0.1:3333/transactions/summary  
 
 * Understand the insane amount of work involved in testing all the possibilities and then sending a bug-free API to production. Imagine it working with perhaps hundreds of routes. The chance of forgetting something, even when automating in Insomnia, is high.
 That's why the next steps are to add automated tests.
