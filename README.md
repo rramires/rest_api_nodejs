@@ -1083,3 +1083,182 @@ Operations should occur normally and return what is expected.
 { "error": "Unauthorized" }
 ```
 
+--- 
+
+### Adding Hooks
+
+#### 1 - Let's add a global hook in server.ts
+
+```js
+// const app = fastify()
+
+// Global Hook
+app.addHook('preHandler', async (request) => {
+	console.log(`[${request.method}] ${request.url}`)
+})
+```
+
+#### 2 - Check hello and hello/db and o routes
+
+* [GET] http://127.0.0.1:3333/hello  
+[GET] http://127.0.0.1:3333/hello/db  
+
+#### 3 - Comment out the hook and create one below pointing to check-session-id.ts
+
+```js
+// import
+import { checkSessionId } from './middlewares/check-session-id.js'
+
+// Global Hook
+/* 
+app.addHook('preHandler', async (request) => {
+	console.log(`[${request.method}] ${request.url}`)
+}) 
+*/
+app.addHook('preHandler', checkSessionId)
+```
+
+#### 4 - Check hello and hello/db routes again
+
+* [GET] http://127.0.0.1:3333/hello  
+[GET] http://127.0.0.1:3333/hello/db  
+
+The result is
+
+```json
+{"error":"Unauthorized123"}
+```
+
+* This could be used to call methods that need to be called before all other routes.  
+But it is not ideal for calling authentication as it would block all other routes.  
+
+#### 5 - Remove check session id in server.ts  
+* We won't go into these issues in depth now.
+
+```json
+// Remove or comment
+// import { checkSessionId } from './middlewares/check-session-id.js'
+
+// and
+// app.addHook('preHandler', checkSessionId)
+```
+
+#### 6 - But if you add an addHook-preHandler inside a route, the scope will be that route. 
+* Let's add it in transactions.ts  
+
+```js
+// export async function transactionsRoutes...
+
+// Middleware to check if sessionId exists
+app.addHook('preHandler', checkSessionId)
+```
+
+#### 7 - Remove preHandler from all get functions
+
+```js
+/* Remove 
+{
+    preHandler: [checkSessionId]
+}
+*/
+
+// It goes back to being like this
+
+// Select All
+app.get('/', async (request) //...
+
+// Select SUM
+app.get('/summary', async (request) //...
+
+// Select Unique 
+app.get('/:id', async (request) //...
+```
+
+#### 8 - Test get routes again via Insomnia
+
+* GET http://127.0.0.1:3333/transactions  
+GET http://127.0.0.1:3333/transactions/transaction_id  
+GET http://127.0.0.1:3333/transactions/summary  
+
+The result should be
+
+```json
+{"error":"Unauthorized123"}
+```
+
+* But if you test it now   
+POST http://127.0.0.1:3333/transactions
+
+```json
+{"error":"Unauthorized123"}
+```
+* Houston I have a problem!  
+The solution is to separate routes that require authorization and those that do not.
+
+#### 9 - Duplicate the transaction.ts file and rename one to public-transaction.ts and the other to private-transaction.ts
+
+* In public-transaction.ts rename main function with public prefix
+
+```js
+export async function publicTransactionsRoutes //...
+```
+
+* Remove addHook-preHandler
+
+```js
+// Remove this
+// Middleware to check if sessionId exists
+app.addHook('preHandler', checkSessionId)
+```
+
+* Delete all query routes, keeping only the Insert route
+
+* In private-transaction.ts rename main function with private prefix
+
+```js
+export async function privateTransactionsRoutes //...
+```
+
+* Delete Insert query route, keeping all the GET routes
+
+#### 10 - Now just fix the import errors and separate the routes in server.ts
+
+```js
+// imports
+import { publicTransactionsRoutes } from './routes/public-transactions.js'
+import { privateTransactionsRoutes } from './routes/private-transactions.js'
+
+// Public Routes ---------
+app.register(helloRoute, {
+	prefix: '/hello'
+})
+
+app.register(publicTransactionsRoutes, {
+	prefix: '/transactions'
+})
+
+// Private Routes ---------
+app.register(privateTransactionsRoutes, {
+	prefix: '/transactions'
+})
+```
+
+* If more routes appear in the application from now on, just follow this approach
+
+#### 11 - Delete the app.db, run the migration and test all routes again.
+
+```json
+npm run knex -- migrate:latest     
+npm run dev 
+```
+* Test
+[GET] http://127.0.0.1:3333/hello  
+[GET] http://127.0.0.1:3333/hello/db  
+GET http://127.0.0.1:3333/transactions  
+GET http://127.0.0.1:3333/transactions/transaction_id  
+GET http://127.0.0.1:3333/transactions/summary  
+
+* Understand the insane amount of work involved in testing all the possibilities and then sending a bug-free API to production. Imagine it working with perhaps hundreds of routes. The chance of forgetting something, even when automating in Insomnia, is high.
+That's why the next steps are to add automated tests.
+
+

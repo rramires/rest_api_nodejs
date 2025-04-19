@@ -4,19 +4,33 @@ import fastify from 'fastify'
 import cookie from '@fastify/cookie'
 //
 import { helloRoute } from './routes/hello.js'
-import { transactionsRoutes } from './routes/transactions.js'
+import { publicTransactionsRoutes } from './routes/public-transactions.js'
+import { privateTransactionsRoutes } from './routes/private-transactions.js'
 
 // The application
 const app = fastify()
 
+// Global Hook
+/* 
+app.addHook('preHandler', async (request) => {
+	console.log(`[${request.method}] ${request.url}`)
+}) 
+*/
+
 // Plugins
 app.register(cookie)
 
-// Routes
+// Public Routes ---------
 app.register(helloRoute, {
 	prefix: '/hello'
 })
-app.register(transactionsRoutes, {
+
+app.register(publicTransactionsRoutes, {
+	prefix: '/transactions'
+})
+
+// Private Routes ---------
+app.register(privateTransactionsRoutes, {
 	prefix: '/transactions'
 })
 
