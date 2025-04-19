@@ -40,7 +40,7 @@ export async function transactionsRoutes(app: FastifyInstance) {
     // Select All
     app.get('/', {
         preHandler: [checkSessionId]
-    }, async (request, reply) => {
+    }, async (request) => {
 
         // get cookie
         const { sessionId } = request.cookies
@@ -61,10 +61,15 @@ export async function transactionsRoutes(app: FastifyInstance) {
     // Select SUM
     app.get('/summary', {
         preHandler: [checkSessionId]
-    }, async () => {
+    }, async (request) => {
+
+        // get cookie
+        const { sessionId } = request.cookies
 
         // select
-        const summary = await knexConn('transactions').sum('amount', { as: 'balance' }).first()
+        const summary = await knexConn('transactions')
+            .where('session_id', sessionId)
+            .sum('amount', { as: 'balance' }).first()
         // 200 OK
         return summary || { balance: 0 }
     })
@@ -80,8 +85,15 @@ export async function transactionsRoutes(app: FastifyInstance) {
         })
         const { id } = paramsSchema.parse(request.params)
 
+        // get cookie
+        const { sessionId } = request.cookies
+
         // select
-        const transaction = await knexConn('transactions').where('id', id).first()
+        const transaction = await knexConn('transactions')
+            .where({
+                'session_id': sessionId,
+                'id': id
+            }).first()
 
         // if not found
         if (!transaction) {

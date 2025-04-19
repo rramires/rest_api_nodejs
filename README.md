@@ -1029,7 +1029,7 @@ export async function checkSessionId(request, reply) {
 const { sessionId } = request.cookies
 ```
 
-#### 3 - And add the middleware after route path using preHandler
+#### 4 - And add the middleware after route path using preHandler
 
 ```js
 // import 
@@ -1038,24 +1038,38 @@ import { checkSessionId } from "../middlewares/check-session-id.js"
 // Select All
 app.get('/', {
     preHandler: [checkSessionId]
-}, async (request, reply) => { //...
-```
-
-#### 4 - Repeat this for the other query routes
-
-```js
- // Select SUM
-app.get('/summary', {
-    preHandler: [checkSessionId]
-}, async () => { // ...
-
-// Select Unique 
-app.get('/:id', {
-    preHandler: [checkSessionId]
 }, async (request) => { //...
 ```
 
-#### 5 - Test the three routes in Insomnia
+#### 5 - Add the filter by session Id in the where of the other queries
+
+In Select SUM add
+
+```js
+// get cookie
+const { sessionId } = request.cookies
+
+// select
+const transactions = await knexConn('transactions')
+    .where('session_id', sessionId)
+    .select()
+// ...
+```
+
+In Select Unique add 
+```js
+// get cookie
+const { sessionId } = request.cookies
+
+// select
+const transaction = await knexConn('transactions')
+    .where({
+        'session_id': sessionId,
+        'id': id
+    }).first()
+```
+
+#### 6 - Test the three routes in Insomnia
 
 * GET http://127.0.0.1:3333/transactions  
 GET http://127.0.0.1:3333/transactions/transaction_id  
@@ -1063,7 +1077,7 @@ GET http://127.0.0.1:3333/transactions/summary
 
 Operations should occur normally and return what is expected.
 
-#### 6 - Delete cookie in Insomnia and check if returns 401 error
+#### 7 - Delete cookie in Insomnia and check if returns 401 error
 
 ```json
 { "error": "Unauthorized" }
