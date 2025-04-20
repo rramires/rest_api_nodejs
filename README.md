@@ -1261,4 +1261,75 @@ npm run dev
 * Understand the insane amount of work involved in testing all the possibilities and then sending a bug-free API to production. Imagine it working with perhaps hundreds of routes. The chance of forgetting something, even when automating in Insomnia, is high.
 That's why the next steps are to add automated tests.
 
+--- 
 
+### Adding Unit Tests
+
+* Tests are for more than just making the application work.  
+They give us confidence when it comes to maintaining the code and implementing new features.
+
+There are three types of tests and we can think of them as a pyramid: 
+- End-to-End Tests -> Simulates a user operating the application  
+- Integration Tests -> Tests the communication between two or more functionalities  
+- Unit Tests -> Tests one isolated functionality at a time  
+
+
+* End to end tests:  
+On the front-end: open the login page, type the text user@email.com in the email ID field, click the button, etc.  
+On the back-end: HTTP calls, Authentication, WebSockets, etc.  
+
+* In this example application, to make it easier to understand, we will focus on the easiest one, E2E Tests.
+
+* The most widely used and famous testing framework is Jest. But we will use Vitest, which uses the same syntax but runs much faster.
+
+#### 1 - Install Vitest
+
+```sh
+npm i vitest -D
+```
+
+#### 2 - Create a **__tests__** folder in app root and transactions.test.ts file with
+
+```js
+import { expect, test } from 'vitest';
+
+test('User must create a new transaction', async () => {
+
+    // Call HTTP POST /transactions
+    const statusCode = 201;
+
+    // test
+    expect(201).toEqual(statusCode);
+})
+```
+
+* There was probably an error in tsconfig.json complaining that it could not access this new folder.  
+We will resolve this in the next step.
+
+#### 3 - Adding **__tests__** folder in "exclude" section in tsconfig.json  
+
+```json
+"exclude": [
+    "__tests__",
+    "knexfile.ts",
+    "db/migrations"
+]
+```
+
+#### 4 - Running Vitest
+
+```sh
+npx vitest
+```
+
+#### 5 - Modify package.json, in scripts section to add
+
+```json
+"test": "vitest"
+```
+
+#### 6 - Running Vitest with simple
+
+```json
+npm test
+```
