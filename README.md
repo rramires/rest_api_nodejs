@@ -1330,6 +1330,91 @@ npx vitest
 
 #### 6 - Running Vitest with simple
 
-```json
+```sh
 npm test
 ```
+
+---  
+
+### Modifying the application to use Supertest
+
+* Supertest allows us to run the application during testing, without having to run it in normal execution mode.  
+To do this, we must separate the application from the final part where we load the http server (app.listen...) so that Supertest only loads this first part.
+
+#### 1 - Create a new file called **app.ts** and cut out all the contents of server.ts except the app.listen part
+
+```js
+import { env } from './validators/env.js'
+//
+import fastify from 'fastify'
+import cookie from '@fastify/cookie'
+//
+import { helloRoute } from './routes/hello.js'
+import { publicTransactionsRoutes } from './routes/public-transactions.js'
+import { privateTransactionsRoutes } from './routes/private-transactions.js'
+
+// The application
+const app = fastify()
+
+// Global Hook
+/* 
+app.addHook('preHandler', async (request) => {
+    console.log(`[${request.method}] ${request.url}`)
+}) 
+*/
+
+// Plugins
+app.register(cookie)
+
+// Public Routes ---------
+app.register(helloRoute, {
+    prefix: '/hello'
+})
+
+app.register(publicTransactionsRoutes, {
+    prefix: '/transactions'
+})
+
+// Private Routes ---------
+app.register(privateTransactionsRoutes, {
+    prefix: '/transactions'
+})
+```
+
+### 2 - And Export the app instance
+
+```js
+// The application
+export const app = fastify()
+```
+
+### 3 - In server.ts import app and env
+
+```js
+// add imports
+import { app } from './app.js'
+import { env } from './validators/env.js'
+
+// Start the server
+app.listen({ port: env.HTTP_PORT }, (err, address) => {
+	if (err) {
+		console.error(err)
+		process.exit(1)
+	}
+	console.log(`Server is running at ${address} `)
+})
+```
+
+### 4 - In app.ts remove unnecessary **env** import
+
+```js
+// Remove
+import { env } from './validators/env.js'
+```
+
+### 5 - Running the app. It should work normally.
+
+--- 
+
+
+
