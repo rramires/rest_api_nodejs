@@ -1381,14 +1381,14 @@ app.register(privateTransactionsRoutes, {
 })
 ```
 
-### 2 - And Export the app instance
+#### 2 - And Export the app instance
 
 ```js
 // The application
 export const app = fastify()
 ```
 
-### 3 - In server.ts import app and env
+#### 3 - In server.ts import app and env
 
 ```js
 // add imports
@@ -1405,16 +1405,70 @@ app.listen({ port: env.HTTP_PORT }, (err, address) => {
 })
 ```
 
-### 4 - In app.ts remove unnecessary **env** import
+#### 4 - In app.ts remove unnecessary **env** import
 
 ```js
 // Remove
 import { env } from './validators/env.js'
 ```
 
-### 5 - Running the app. It should work normally.
+#### 5 - Running the app. It should work normally.
 
---- 
+#### 6 - Instal Supertest and your types
+
+```sh
+npm i supertest -D
+npm i @types/supertest -D
+```
+
+---  
+
+### Creating real app tests
+
+#### 1 - Modify transactions.test.ts to supertest open and close the app
+
+```js
+import { app } from '../src/app';
+import { beforeAll, afterAll, expect, test } from 'vitest';
+
+// Setup the server before running tests
+beforeAll(async () => {
+    await app.ready();
+})
+
+// Teardown the server after running tests
+afterAll(async () => {
+    await app.close();
+})
+
+// test...
+```
+
+#### 2 - Modify to create a real transaction test
+
+```js
+// import
+import supertest from 'supertest';
+
+// tests
+test('User must create a new transaction', async () => {
+
+    await supertest(app.server)
+        .post('/transactions')
+        .send({
+            title: 'Test Transaction',
+            amount: 1000,
+            type: 'credit'
+        })
+        .expect(201)
+})
+```
+
+#### 3 - Running test
+
+```sh
+npm test
+```
 
 
 
