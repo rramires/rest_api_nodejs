@@ -27,5 +27,36 @@ describe('Transactions routes', () => {
             })
             .expect(201)
     })
+
+    it('should be able to list all transactions', async () => {
+
+        const newTransaction = {
+            title: 'Test Transaction',
+            amount: 1000,
+            type: 'credit'
+        }
+
+        // insert
+        const createTransaction = await supertest(app.server)
+            .post('/transactions')
+            .send(newTransaction)
+
+        // get cookies
+        const cookies = createTransaction.get('Set-Cookie') || []
+
+        // list
+        const listAllTransactions = await supertest(app.server)
+            .get('/transactions')
+            .set('Cookie', cookies)
+            .expect(200)
+
+        // test content
+        expect(listAllTransactions.body.transactions).toEqual([
+            expect.objectContaining({
+                title: newTransaction.title,
+                amount: newTransaction.amount
+            })
+        ])
+    })
 })
 
