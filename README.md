@@ -1470,5 +1470,52 @@ test('User must create a new transaction', async () => {
 npm test
 ```
 
+#### 4 - Categorizing the tests 
+
+* Wrap all tests of a part of the application using describe.  
+In addition to categorizing, it serves to isolate the test steps.  
+The beforeAll, afterAll will occur within this describe.  
+
+```js
+describe('Transactions routes', () => {
+    // beforeAll
+    // afterAll
+    // test 1
+    // test 2 etc
+})
+```
+
+#### 4 - Categorizing the tests 
+
+* You can use either the **test** method or the **it** method.  
+Both work the same way.  
+The it method however serves as a part of the sentence, as in the requirements conventions.  
+e.g. it should be able... = it('should be able ...  
+
+```js
+it('should be able to create a new transaction', async () => {
+
+    await supertest(app.server)
+        .post('/transactions')
+        .send({
+            title: 'Test Transaction',
+            amount: 1000,
+            type: 'credit'
+        })
+        .expect(201)
+})
+```
+
+#### 5 - Testing
+
+ * Note that the output sentence using describe + the convention in it makes much more sense.
+
+```sh
+npm test   
+// Says
+✓ Transactions routes > should be able to create a new transaction 
+```
+
+
 
 
