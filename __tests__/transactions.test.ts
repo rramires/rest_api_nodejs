@@ -1,7 +1,7 @@
 import supertest from 'supertest';
 import { app } from '../src/app';
-import { describe, beforeAll, afterAll, it, expect } from 'vitest';
-import { title } from 'process';
+import { describe, beforeAll, afterAll, beforeEach, it, expect } from 'vitest';
+import { execSync } from 'node:child_process';
 
 describe('Transactions routes', () => {
     // Setup the server before running tests
@@ -12,6 +12,14 @@ describe('Transactions routes', () => {
     // Teardown the server after running tests
     afterAll(async () => {
         await app.close();
+    })
+
+    // Run before each test
+    beforeEach(async () => {
+        // delete all tables, if exists
+        execSync('npm run knex -- migrate:rollback --all')
+        // create tables
+        execSync('npm run knex -- migrate:latest')
     })
 
     // Tests

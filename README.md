@@ -1553,4 +1553,70 @@ it('should be able to list all transactions', async () => {
 })
 ```
 
+---  
+
+### Database issues in testing
+
+* Look in the database, in the transactions table and notice that records are being inserted whenever the tests are being executed.  
+To solve this, they will create a separate bank just for testing.
+
+#### 1 - Duplicate the .env file, renaming it to .env.test and modify the database name
+
+```ini
+# Node/App Environment - "test"
+NODE_ENV="test"
+
+# Application http port - 3333
+HTTP_PORT=3333
+
+# SQLite TEST database path - "./db/test.db"
+DATABASE_PATH="./db/test.db"
+```
+
+* Add to .gitignore and duplicate as .env.test.example
+
+
+#### 2 - Modify env.ts in validators
+
+```js
+// change
+import "dotenv/config"
+// to
+import { config } from 'dotenv'
+import { z } from 'zod'
+// and add
+// Checking the environment
+if (process.env.NODE_ENV === 'test') {
+    config({ path: '.env.test' })
+} else {
+    config()
+}
+```
+
+#### 3 - Running tests
+
+```sh
+npm test
+```
+* The tests will fail. But check in the **db** folder that the **test.db** database has been created.  
+The tests failed because the tables had not yet been created in this database.
+
+#### 4 - Modify **transactions.test.ts** to run the migrations.
+
+```js
+// import
+import { execSync } from 'node:child_process';
+// and add beforeEach
+import { describe, beforeAll, afterAll, beforeEach, it, expect } from 'vitest';
+
+// add
+
+// Run before each test
+beforeEach(async () => {
+    // delete all tables, if exists
+    execSync('npm run knex -- migrate:rollback --all')
+    // create tables
+    execSync('npm run knex -- migrate:latest')
+})
+```
 
