@@ -1620,3 +1620,90 @@ beforeEach(async () => {
 })
 ```
 
+---  
+
+### Add other tests
+
+#### 1 - Testing select unique
+
+```js
+it('should be able to get a specific transaction', async () => {
+
+    const newTransaction = {
+        title: 'Test Transaction',
+        amount: 1000,
+        type: 'credit'
+    }
+
+    // insert
+    const createTransaction = await supertest(app.server)
+        .post('/transactions')
+        .send(newTransaction)
+
+    // get cookies
+    const cookies = createTransaction.get('Set-Cookie') || []
+
+    // list all
+    const listAllTransactions = await supertest(app.server)
+        .get('/transactions')
+        .set('Cookie', cookies)
+
+    const transactionId = listAllTransactions.body.transactions[0].id
+
+    // list unique
+    const getTransaction = await supertest(app.server)
+        .get(`/transactions/${transactionId}`)
+        .set('Cookie', cookies)
+        .expect(200)
+
+    // test content
+    expect(getTransaction.body).toEqual(
+        expect.objectContaining({
+            id: transactionId,
+            title: newTransaction.title,
+            amount: newTransaction.amount
+        })
+    )
+})
+```
+
+#### 2 - Testing summary
+
+```js
+it('should be able to get summary', async () => {
+
+    const newTransaction1 = {
+        title: 'Test Transaction 1',
+        amount: 1000,
+        type: 'credit'
+    }
+
+    const newTransaction2 = {
+        title: 'Test Transaction 2',
+        amount: 500,
+        type: 'debit'
+    }
+
+    // insert
+    const createTransaction1 = await supertest(app.server)
+        .post('/transactions')
+        .send(newTransaction1)
+
+    // get cookies
+    const cookies = createTransaction1.get('Set-Cookie') || []
+
+    await supertest(app.server)
+        .post('/transactions')
+        .set('Cookie', cookies)
+        .send(newTransaction2)
+
+    // list
+    const getSummary = await supertest(app.server)
+        .get('/transactions/summary')
+        .set('Cookie', cookies)
+        .expect(200)
+
+    expect(getSummary.body.balance).toEqual(newTransaction1.amount - newTransaction2.amount)
+})
+```
+
