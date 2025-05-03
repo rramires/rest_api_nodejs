@@ -1563,8 +1563,8 @@ NODE_ENV="test"
 # Application http port - 3333
 HTTP_PORT=3333
 
-# SQLite TEST database path - "./db/test.db"
-DATABASE_PATH="./db/test.db"
+# SQLite TEST database path - "./db/tests.db"
+DATABASE_PATH="./db/tests.db"
 ```
 
 * Add to .gitignore and duplicate as .env.test.example
@@ -1700,4 +1700,76 @@ it('should be able to get summary', async () => {
     expect(getSummary.body.balance).toEqual(newTransaction1.amount - newTransaction2.amount)
 })
 ```
+
+---
+
+### Compiling the project  
+
+* We had already configured a shortcut for compilation in package.json ("compile": "npx tsc"), and we can run with **npm run compile**  
+The javascript files were generated in the **dist** folder.  
+* But the kenex files and migrations were excluded in the TypeScript configuration in the **tsconfig.json** file  
+They will be needed if you want to create the database using migrations in production.
+
+#### 1 - Modifying tsconfig.json  
+
+Remove knexfile.ts and db/migrations from exclude at the end of tsconfig. Keep only \_\_tests__  
+It will generate some errors in tsconfig.
+
+```json
+"exclude": [
+"__tests__"
+]
+```
+
+Comment the **rootDir** section and uncomment **rootDirs** and add all necessary sources
+
+```json
+"rootDirs": [
+    "./src",
+    "./db/migrations",
+    "nexfile.ts"
+]
+```
+
+#### 2 - Compile the project  
+
+```sh
+npm run compile 
+```
+
+#### 3 - Running compilede code  
+
+* The server will run, but remember that it needs the .env and the database.
+
+```sh
+node ./dist/src/server.js    
+```
+
+#### 4 - Compile with tsup
+
+* Another way to compile TypeScript is through the Tsup module.  
+Let's install it  
+
+```sh
+npm i tsup -D  
+```
+
+#### 5 - Add another build command in **package.json** in the scripts section
+
+```json
+"build": "tsup src --format esm --out-dir build"
+```
+
+* Add build folder in .gitignore too  
+
+```sh
+# Build folder
+build
+```  
+
+
+
+
+
+
 

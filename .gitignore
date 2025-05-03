@@ -1,5 +1,8 @@
 # App SQLite db
-db/app.db
+db/*.db
+
+# Build folder
+build
 
 # Logs
 logs
@@ -138,3 +141,4 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+db/test.db
