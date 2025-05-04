@@ -1767,8 +1767,78 @@ npm i tsup -D
 build
 ```  
 
+---  
 
+### Deploy to Render Cloud
 
+#### 1 - Create free Postgress database in Render, named rest-api-db
+
+[Render Database](https://dashboard.render.com/new/database)
+
+* Free databases in Render expires in 90 days  
+
+#### 2 - Add new variable in  files
+
+In .env, env.example, .env.test and .env.test.example  
+```ini
+# Database type - sqlite or pg
+DATABASE_TYPE=better-sqlite3
+```
+
+In .env, env.example  
+```ini
+# Postgres database URL - e.g. postgresql://rest_api_db_... 
+DATABASE_URL=
+```
+
+#### 3 - Modify the env.ts file in the validators to add this new variables
+
+```js
+// add
+DATABASE_TYPE: z.enum(['better-sqlite3', 'pg'])
+// and add
+DATABASE_URL: z.optional(z.string())
+```
+
+#### 4 - Install Postgress driver and types
+
+```sh
+npm i pg
+npm i @types/pg -D
+```
+
+#### 5 - Modify database.ts to change db client and connection
+
+```js
+// change 
+client: 'better-sqlite3',
+// to
+client: env.DATABASE_TYPE,
+
+// and change
+connection: {
+    filename: env.DATABASE_PATH
+},
+// to
+connection:
+    env.DATABASE_TYPE !== 'pg' ?
+        { filename: env.DATABASE_PATH } :
+        env.DATABASE_URL,
+```
+
+#### 6 - Specify the minimum node version in package.json 
+
+See more details at [Render node version](https://render.com/docs/node-version)  
+
+```json
+"engines": {
+    "node": ">=22.12.0"
+},
+```  
+
+#### 7 - Commit changes to Github
+
+ 
 
 
 
