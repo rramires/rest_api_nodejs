@@ -1838,7 +1838,42 @@ See more details at [Render node version](https://render.com/docs/node-version)
 
 #### 7 - Commit changes to Github
 
- 
+#### 8 - In Render Cloud, copy **Internal Database URL** of the database you created previously and past in your notpad
+
+#### 9 - In Render Cloud Dashboard, click in **+New > Web Service**
+
+* Click in GitHub icon and authorize to access your repositories  
+Select your repo  
+* In Language select Node  
+* In the region, put the same one in which the database was created
+* Build command
+
+```sh
+npm install && npm run knex -- migrate:latest && npm run compile
+```
+
+* Start Command
+
+```sh
+node ./dist/src/server.js 
+```
+
+* Select free plan
+
+
+* Add Environment Variable to select Postgres
+
+```sh
+DATABASE_TYPE 
+pg
+```
+
+* And add the internal database URL that you copied previously.
+```sh
+DATABASE_URL 
+postgresql://rest_api_db... etc
+```
+
 
 
 
