@@ -1836,11 +1836,24 @@ See more details at [Render node version](https://render.com/docs/node-version)
 },
 ```  
 
-#### 7 - Commit changes to Github
+#### 7 - Modify server.ts
 
-#### 8 - In Render Cloud, copy **Internal Database URL** of the database you created previously and past in your notpad
+```js
+// in
+app.listen({ port: env.HTTP_PORT }, // ...
+// add host
+app.listen({
+	port: env.HTTP_PORT,
+	host: ("RENDER" in process.env) ? '0.0.0.0' : 'localhost'
+}, // ...
+```
 
-#### 9 - In Render Cloud Dashboard, click in **+New > Web Service**
+
+#### 8 - Commit changes to Github
+
+#### 9 - In Render Cloud, copy **Internal Database URL** of the database you created previously and past in your notpad
+
+#### 10 - In Render Cloud Dashboard, click in **+New > Web Service**
 
 * Click in GitHub icon and authorize to access your repositories  
 Select your repo  
@@ -1860,7 +1873,6 @@ node ./dist/src/server.js
 
 * Select free plan
 
-
 * Add Environment Variable to select Postgres
 
 ```sh
@@ -1869,6 +1881,7 @@ pg
 ```
 
 * And add the internal database URL that you copied previously.
+
 ```sh
 DATABASE_URL 
 postgresql://rest_api_db... etc
