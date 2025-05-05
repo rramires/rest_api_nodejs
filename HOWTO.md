@@ -1850,7 +1850,7 @@ app.listen({
 }, // ...
 ```
 
-#### 8 - Create a tsup.config.ts file in root folder to add a multiple sources
+#### 8 - Create a tsup.config.ts file in root folder to add a multiple sources and modify build command in scripts
 
 ```js
 import { defineConfig } from 'tsup'
@@ -1862,6 +1862,13 @@ export default defineConfig({
     clean: true,
 })
 ```
+
+* Remove **src** in (tsup ~~src~~ --format etc)
+
+```json
+"build": "tsup --format esm --out-dir build",
+```
+
 
 
 #### 9 - Commit changes to Github
