@@ -8,8 +8,8 @@ export async function helloRoute(app: FastifyInstance) {
     })
     app.get('/db', async () => {
         // select for testing 
-        const result = await knexConn.raw('select 1+9 as result')
+        const result = await knexConn.raw('SELECT 1 + 9 AS result;')
         //console.log(result[0].result)
-        return `Database OK! Result from select is: ${result[0].result}`
+        return `Database OK! Result from select is: ${JSON.stringify(result)}`
     })
 }
