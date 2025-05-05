@@ -1830,7 +1830,7 @@ connection:
 
 See more details at [Render node version](https://render.com/docs/node-version)  
 
-```json
+```js
 "engines": {
     "node": ">=22.12.0"
 },
@@ -1889,9 +1889,7 @@ npm install && npm run build && npm run knex -- migrate:latest
 
 * Start Command
 
-```sh
-npm start
-```
+Environments
 
 * Select free plan
 
@@ -1908,8 +1906,33 @@ DATABASE_TYPE=pg
 DATABASE_URL=postgresql://rest_api_db... etc
 ```
 
+---
 
+### Environments in Insomnia
 
+#### 1 - Create two sub Environments with url variable in json format
 
+* Dev
 
+```json
+{
+	"url": "http://localhost:3333"
+}
+```
+
+* Prod
+
+```json
+{
+	"url": "https://your-prod-url.onrender.com"
+}
+```
+
+#### 2 - Adding prefix variable in all routes   
+* _URL.url/hello etc
+
+#### 3 - Test all routes in production using Insomnia
+
+All done!  
+🫡
 
