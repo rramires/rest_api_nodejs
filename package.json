@@ -12,7 +12,8 @@
 		"compile": "npx tsc",
 		"knex": "node --import tsx ./node_modules/knex/bin/cli.js",
 		"test": "vitest",
-		"build": "tsup --format esm --out-dir build"
+		"build": "tsup --format esm --out-dir build",
+		"start": "node build/src/server.js"
 	},
 	"repository": {
 		"type": "git",
