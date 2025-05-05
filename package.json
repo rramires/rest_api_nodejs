@@ -2,7 +2,7 @@
 	"name": "rest_api_nodejs",
 	"version": "1.0.0",
 	"description": "Rest API - NodeJs, using Fastify, TypeScript, KnexJs, Vitest, etc",
-	"main": "src/server.ts",
+	"main": "src/server.js",
 	"type": "module",
 	"engines": {
 		"node": ">=22.12.0"
