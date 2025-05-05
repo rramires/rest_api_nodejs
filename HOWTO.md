@@ -1873,19 +1873,25 @@ node ./dist/src/server.js
 
 * Select free plan
 
-* Add Environment Variable to select Postgres
+* Create in your desktop .env with values
 
-```sh
-DATABASE_TYPE 
-pg
+```ini
+# Node/App Environment - e.g. "development", "test" or "production"
+NODE_ENV="production"
+
+# Application http port - e.g. 3333
+HTTP_PORT=3333
+
+# Database type - better-sqlite3 or pg
+DATABASE_TYPE=pg
+
+# SQLite database path - e.g. "./db/app.db"
+DATABASE_PATH=none
+
+# Postgres database URL (optional) - e.g. postgresql://rest_api_db_... 
+DATABASE_URL=postgresql://rest_api_db... etc
 ```
 
-* And add the internal database URL that you copied previously.
-
-```sh
-DATABASE_URL 
-postgresql://rest_api_db... etc
-```
 
 
 
