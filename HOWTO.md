@@ -1826,7 +1826,7 @@ connection:
         env.DATABASE_URL,
 ```
 
-#### 6 - Specify the minimum node version in package.json 
+#### 6 - Specify the minimum node version in package.json and add start in scripts
 
 See more details at [Render node version](https://render.com/docs/node-version)  
 
@@ -1834,6 +1834,8 @@ See more details at [Render node version](https://render.com/docs/node-version)
 "engines": {
     "node": ">=22.12.0"
 },
+// in scripts
+"start": "node build/src/server.js",
 ```  
 
 #### 7 - Modify server.ts
@@ -1848,12 +1850,25 @@ app.listen({
 }, // ...
 ```
 
+#### 8 - Create a tsup.config.ts file in root folder to add a multiple sources
 
-#### 8 - Commit changes to Github
+```js
+import { defineConfig } from 'tsup'
 
-#### 9 - In Render Cloud, copy **Internal Database URL** of the database you created previously and past in your notpad
+export default defineConfig({
+    entry: ['src', 'knexfile.ts'],
+    splitting: false,
+    sourcemap: true,
+    clean: true,
+})
+```
 
-#### 10 - In Render Cloud Dashboard, click in **+New > Web Service**
+
+#### 9 - Commit changes to Github
+
+#### 10 - In Render Cloud, copy **Internal Database URL** of the database you created previously and past in your notpad
+
+#### 11 - In Render Cloud Dashboard, click in **+New > Web Service**
 
 * Click in GitHub icon and authorize to access your repositories  
 Select your repo  
@@ -1862,13 +1877,13 @@ Select your repo
 * Build command
 
 ```sh
-npm install && npm run knex -- migrate:latest && npm run compile
+npm install && npm run build && npm run knex -- migrate:latest
 ```
 
 * Start Command
 
 ```sh
-node ./dist/src/server.js 
+npm start
 ```
 
 * Select free plan
@@ -1879,14 +1894,8 @@ node ./dist/src/server.js
 # Node/App Environment - e.g. "development", "test" or "production"
 NODE_ENV="production"
 
-# Application http port - e.g. 3333
-HTTP_PORT=3333
-
 # Database type - better-sqlite3 or pg
 DATABASE_TYPE=pg
-
-# SQLite database path - e.g. "./db/app.db"
-DATABASE_PATH=none
 
 # Postgres database URL (optional) - e.g. postgresql://rest_api_db_... 
 DATABASE_URL=postgresql://rest_api_db... etc
